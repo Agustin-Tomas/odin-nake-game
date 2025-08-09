@@ -1,94 +1,48 @@
 package src
-
-import "core:fmt"
-
-
-clock_add:: proc(n: u64, add: u64, maximum: u64) -> u64 {
-    // maximum not incluided
-    return (n + add) % maximum
-}
+// Program entry point
+// Main proc is an orquester
 
 
-clock_sub:: proc(n: u64, sub: u64, maximum: u64) -> u64 {
-    // maximum no included
-    switch {
-    case sub > n:
-        return maximum - (sub - n)
-    case:
-        return n - sub
-    }
-}
+//import "core:fmt"
+import rl "vendor:raylib"
 
+import "renderer"
+import "game"
 
-delete_tail:: proc(gs: ^GameState) {
-    // Undraw tail: at segments[tail^]
-    gs^.snake.tail_index += 1
-    gs^.snake.length -= 1
-}
-
-
-append_head:: proc(gs: ^GameState) {
-    ONE : u64 : 1
-    tail_index := gs^.snake.tail_index
-    length := gs^.snake.length
-
-    current_index := clock_add(tail_index, (length - ONE), SNAKE_SIZE)
-    current_x := gs^.snake.x[current_index]
-    current_y := gs^.snake.y[current_index]
-
-    new_x : u64 = current_x
-    new_y : u64 = current_y
-    switch gs^.snake.direction {
-        case .North:
-            new_y = clock_add(current_y, ONE, HEIGHT)
-        case .South:
-            new_y = clock_sub(current_y, ONE, HEIGHT)
-        case .East:
-            new_x = clock_add(current_x, ONE, WIDTH)
-        case .West:
-            new_x = clock_sub(current_x, ONE, WIDTH)
-    }
-    new_index : u64 = clock_add(current_index, ONE, SNAKE_SIZE)
-
-    gs^.snake.x[new_index] = new_x
-    gs^.snake.y[new_index] = new_y
-    gs^.snake.length += 1
-}
-
-
-update_frame:: proc(gs: ^GameState) {
-    delete_tail(gs)
-    append_head(gs)
-}
-
-
-show_snake :: proc(gs: ^GameState) {
-    index := gs^.snake.tail_index
-    for i in 0..<gs^.snake.length {
-        fmt.println("-->", gs^.snake.x[index], gs^.snake.y[index])
-        index += 1
-    }
-    fmt.println("")
-}
 
 main:: proc() {
-    gs := init_game_state()
+    gs := game.init_game_state()
     defer free(gs)
 
-    show_snake(gs)
+    //renderer.init_renderer()
+
     // Mainloop
-    max_frames: int = 30
-    for i in 0..<max_frames {
-        // Snake movement test
-        switch i {
+    rl.InitWindow(1280, 720, "Snake Game - Dr. Milk")
+
+    frame_counter: u64
+    rl.SetTargetFPS(60)
+
+    for !rl.WindowShouldClose() {
+        rl.BeginDrawing()
+        rl.ClearBackground(rl.BLUE)
+        rl.EndDrawing()
+
+        renderer.init_renderer(gs)
+
+        // testing: snake movement
+        switch frame_counter {
         case 0:
-            gs^.snake.direction = Direction.East
+            gs^.snake.direction = .East
         case 10:
-            gs^.snake.direction = Direction.North
+            gs^.snake.direction = .North
         case 20:
-            gs^.snake.direction = Direction.West
+            gs^.snake.direction = .West
         }
-        update_frame(gs)
-        show_snake(gs)
+
+        frame_counter += 1
     }
+    rl.CloseWindow()
+
+    //update_frame(gs)
+    //show_snake(gs)
 }

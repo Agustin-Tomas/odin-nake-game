@@ -1,4 +1,5 @@
-package src
+package game
+// Here I declare all of the game's state
 
 Direction :: enum{
     North,
@@ -13,20 +14,6 @@ HEIGHT : u64 : 19
 TILE_SIZE :: WIDTH * HEIGHT
 SNAKE_SIZE :: WIDTH * HEIGHT
 
-Buffer :: struct {
-    // Entire grid state
-    // foo_buffer[x + y * WIDTH]
-    tile : [TILE_SIZE]bool,
-}
-
-Snake :: struct {
-    x : [TILE_SIZE]u64,
-    y : [TILE_SIZE]u64,
-    direction: Direction,
-    length: u64,
-    tail_index : u64,
-}
-
 
 GameState :: struct {
     snake: Snake,
@@ -40,6 +27,19 @@ GameState :: struct {
     food_lotery_len : u64,
 }
 
+Buffer :: struct {
+    // Entire grid state
+    // foo_buffer[x + y * WIDTH]
+    tile : [TILE_SIZE]bool,
+}
+
+Snake :: struct {
+    x : [TILE_SIZE]u64,
+    y : [TILE_SIZE]u64,
+    direction: Direction,
+    length: u64,
+    tail_index : u64,
+}
 
 init_game_state:: proc() -> ^GameState {
     gs := new(GameState)
