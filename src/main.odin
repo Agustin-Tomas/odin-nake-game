@@ -17,26 +17,30 @@ main:: proc() {
     //renderer.init_renderer()
 
     // Mainloop
-    rl.InitWindow(1280, 720, "Snake Game - Dr. Milk")
+    rl.InitWindow(i32(46*game.WIDTH), i32(46*game.HEIGHT), "Snake Game - Dr. Milk")
 
     frame_counter: u64
-    rl.SetTargetFPS(60)
+    rl.SetTargetFPS(20)
+
+    texture := renderer.init_renderer(gs)
 
     for !rl.WindowShouldClose() {
         rl.BeginDrawing()
         rl.ClearBackground(rl.BLUE)
+        renderer.draw_snake(gs, texture)
         rl.EndDrawing()
-
-        renderer.init_renderer(gs)
+        game.update_frame(gs)
 
         // testing: snake movement
-        switch frame_counter {
+        switch frame_counter%35 {
         case 0:
             gs^.snake.direction = .East
-        case 10:
+        case 8:
             gs^.snake.direction = .North
-        case 20:
+        case 17:
             gs^.snake.direction = .West
+        case 28:
+            gs^.snake.direction = .North
         }
 
         frame_counter += 1

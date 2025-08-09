@@ -48,15 +48,23 @@ init_game_state:: proc() -> ^GameState {
     head_x : u64 = 4
     head_y : u64 = 16
 
-    gs.snake.x[0] = head_x - 2
-    gs.snake.x[1] = head_x - 1
-    gs.snake.x[2] = head_x
+    gs.snake.x[0] = head_x-6
+    gs.snake.x[1] = head_x-5
+    gs.snake.x[2] = head_x-4
+    gs.snake.x[3] = head_x-3
+    gs.snake.x[4] = head_x-2
+    gs.snake.x[5] = head_x-1
+    gs.snake.x[6] = head_x
 
-    gs.snake.y[0] = head_y - 2
-    gs.snake.y[1] = head_y - 1
+    gs.snake.y[0] = head_y
+    gs.snake.y[1] = head_y
     gs.snake.y[2] = head_y
+    gs.snake.y[3] = head_y
+    gs.snake.y[4] = head_y
+    gs.snake.y[5] = head_y
+    gs.snake.y[6] = head_y
 
-    gs.snake.length= 3
+    gs.snake.length= 7
 
 
     gs.food_buffer[15 + 4 * WIDTH] = true
