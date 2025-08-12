@@ -9,8 +9,8 @@ Direction :: enum{
 }
 
 // Parameters
-WIDTH : u64 : 19
-HEIGHT : u64 : 19
+WIDTH : u64 : 24
+HEIGHT : u64 : 24
 TILE_SIZE :: WIDTH * HEIGHT
 SNAKE_SIZE :: WIDTH * HEIGHT
 
@@ -18,13 +18,18 @@ SNAKE_SIZE :: WIDTH * HEIGHT
 GameState :: struct {
     snake: Snake,
 
-    food_buffer : [WIDTH * HEIGHT]bool,
-    snake_buffer : [WIDTH * HEIGHT]bool,
-    uccupied_buffer : [WIDTH * HEIGHT]bool,
+    food_buffer : [TILE_SIZE]bool,
+    snake_buffer : [TILE_SIZE]bool,
+    occupied_buffer : [TILE_SIZE]bool,
 
     //Slice of pointers to food_buffer
-    food_lotery_buffer : [WIDTH * HEIGHT]^bool,
+    food_is_present : bool,
+    frames_since_eaten : u64,
+    food_lotery_x : [TILE_SIZE]u64,
+    food_lotery_y : [TILE_SIZE]u64,
     food_lotery_len : u64,
+
+    game_lost : bool
 }
 
 Buffer :: struct {
@@ -39,6 +44,11 @@ Snake :: struct {
     direction: Direction,
     length: u64,
     tail_index : u64,
+
+    block_up : bool,
+    block_right : bool,
+    block_down : bool,
+    block_left : bool,
 }
 
 init_game_state:: proc() -> ^GameState {
@@ -46,28 +56,26 @@ init_game_state:: proc() -> ^GameState {
 
     // Initialize snake - Testing
     head_x : u64 = 4
-    head_y : u64 = 16
+    head_y : u64 = 12
 
-    gs.snake.x[0] = head_x-6
-    gs.snake.x[1] = head_x-5
-    gs.snake.x[2] = head_x-4
-    gs.snake.x[3] = head_x-3
-    gs.snake.x[4] = head_x-2
-    gs.snake.x[5] = head_x-1
-    gs.snake.x[6] = head_x
+
+    gs.snake.x[0] = head_x-2
+    gs.snake.x[1] = head_x-1
+    gs.snake.x[2] = head_x
+
 
     gs.snake.y[0] = head_y
     gs.snake.y[1] = head_y
     gs.snake.y[2] = head_y
-    gs.snake.y[3] = head_y
-    gs.snake.y[4] = head_y
-    gs.snake.y[5] = head_y
-    gs.snake.y[6] = head_y
 
-    gs.snake.length= 7
+    gs.snake.tail_index = 0
+    gs.snake.length = 3
+
+    gs.snake.direction = Direction.East
+    gs.snake.block_left = true
 
 
-    gs.food_buffer[15 + 4 * WIDTH] = true
+    //gs.food_buffer[0+ 0 * WIDTH] = true
 
 
     for i in 0..<gs.snake.length {
@@ -76,7 +84,7 @@ init_game_state:: proc() -> ^GameState {
         gs.snake_buffer[x + y * WIDTH] = true
     }
 
-    gs.uccupied_buffer = (gs.snake_buffer | gs.food_buffer)
+    gs.occupied_buffer = (gs.snake_buffer | gs.food_buffer)
 
     return gs
 }
