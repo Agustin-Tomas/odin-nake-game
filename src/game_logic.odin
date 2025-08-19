@@ -4,7 +4,7 @@ package src
 
 //import "core:fmt"
 import "core:math/rand"
-
+import fmt "core:fmt"
 
 clock_add :: proc(n: u64, add: u64, maximum: u64) -> u64 {
     // maximum not incluided
@@ -112,8 +112,9 @@ spawn_food :: proc() {
         }
     }
 
+    random_i : u64 = 0
     if ctx.gs.food_lotery_len > 0 {
-        random_i : u64 = u64( rand.int_max( int(ctx.gs.food_lotery_len-1) ) )
+        random_i = u64( rand.int_max(int(ctx.gs.food_lotery_len)) )
         new_food_x := ctx.gs.food_lotery_x[random_i]
         new_food_y := ctx.gs.food_lotery_y[random_i]
         ctx.gs.food_buffer[new_food_x + new_food_y * WIDTH] = true

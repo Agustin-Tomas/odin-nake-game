@@ -32,9 +32,24 @@ Game_State :: struct {
     game_lost : bool
 }
 
-//Changelog :: struct {
-//    change
-//}
+
+// Relevant for rendering
+Change_Field :: enum{
+    food_buffer,
+    snake_buffer,
+}
+
+Change_Value :: union {
+    u64,
+    bool,
+}
+
+Changelog :: struct {
+    field: Change_Field,
+    value: Change_Value,
+    x: u64,
+    y: u64,
+}
 
 Buffer :: struct {
     // Entire grid state
