@@ -7,7 +7,7 @@ import rl "vendor:raylib"
 init_window :: proc(){
     rl.SetTraceLogLevel(rl.TraceLogLevel.ERROR)
     rl.InitWindow(i32(144 * 2), i32(144 * 2), "Snake Game - Dr. Milk")
-    rl.SetTargetFPS(60)
+    //rl.SetTargetFPS(60)
 }
 
 
@@ -31,7 +31,7 @@ render_scene :: proc(){
     draw_food()
     draw_snake()
 
-    //rl.DrawFPS(0, 0)
+    rl.DrawFPS(0, 0)
     rl.EndDrawing()
 }
 

@@ -4,7 +4,7 @@ package src
 
 
 import rl "vendor:raylib"
-
+import time "core:time"
 
 Screen :: enum{
     Intro,
@@ -18,10 +18,10 @@ Screen :: enum{
 
 Context :: struct{
     gs: ^Game_State,
-    last_gs: ^Game_State,
-    mod_gs: ^Game_State,
-    st_changelog: [dynamic]int,
-    nd_changelog: int,
+    last_tick_gs: ^Game_State,
+    new_tick_gs: ^Game_State,
+    st_changelog: [dynamic]^Changelog,
+    nd_changelog: [dynamic]^Changelog,
     dt: f64,
     screen: Screen,
     bindings: map[PlayerCommand]rl.KeyboardKey,
@@ -34,8 +34,6 @@ ctx : Context
 
 
 main:: proc() {
-    _actual_game_state = init_game_state()
-    ctx.gs = _actual_game_state
     ctx.screen = .Gameplay
 
     switch ctx.screen{
@@ -55,19 +53,36 @@ main:: proc() {
 }
 
 init_game_loop :: proc() {
+    _first_game_state := init_game_state()
+    _second_game_state := init_game_state()
+    _third_game_state := init_game_state()
+    ctx.gs = _first_game_state
+    ctx.last_tick_gs = _second_game_state
+    ctx.new_tick_gs = _third_game_state
+
     init_window()
     set_bindings()
     load_textures()
 
+    TPS : i64 : 60
+    GAME_TICK_DURATION : i64 : i64( 1000000000 / TPS)
+    start := time.tick_now()
+    end : time.Tick
     game_loop : for !rl.WindowShouldClose() {
+        defer end = time.tick_now()
+
         read_game_input()
-        update_state()
+        if time.duration_nanoseconds(time.tick_diff(start, end)) >= GAME_TICK_DURATION {
+            defer start = time.tick_now()
+            update_state()
+        }
         render_scene()
 
 
         if ctx.gs.game_lost {
             rl.WaitTime(1)
             break game_loop }
+
     }
 }
 

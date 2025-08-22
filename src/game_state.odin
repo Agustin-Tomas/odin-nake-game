@@ -33,7 +33,7 @@ Game_State :: struct {
 }
 
 
-// Relevant for rendering
+// Game data relevant for rendering
 Change_Field :: enum{
     food_buffer,
     snake_buffer,
@@ -45,8 +45,12 @@ Change_Value :: union {
 }
 
 Changelog :: struct {
+    changes: [dynamic]^Change
+}
+
+Change :: struct {
     field: Change_Field,
-    value: Change_Value,
+    value: ^Change_Value,
     x: u64,
     y: u64,
 }
