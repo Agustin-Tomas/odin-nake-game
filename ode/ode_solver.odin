@@ -1,5 +1,10 @@
 package ode
 
+import fmt "core:fmt"
+import csv "core:encoding/csv"
+import os "core:os"
+import "core:strconv"
+
 fun :: proc(x, y: f64) -> f64 {
     return x + y
 }
@@ -37,3 +42,27 @@ ode_solve_rk4_elapsed :: proc(diffeq: f, x0, y0, h, max_x: f64) -> ([dynamic]f64
     return x_serie, y_serie
 }
 
+
+main :: proc() {
+    free_fall :: proc(t, v: f64) -> f64 {
+        return 9.8 - 0.25 * v/68.1
+ }
+    x, y: [dynamic]f64 = ode_solve_rk4_elapsed(free_fall, 0.0, 0.0, 0.1, 40.0)
+
+    view_x: []f64
+    view_y: []f64
+    view_x = x[:]
+    view_y = y[:]
+    view_str_x: [dynamic]string
+    view_str_y: [dynamic]string
+    for i in 0..<len(x) {
+        x_str: string = strconv.ftoa(x[i])
+        append(&view_str_x, x_str)
+    }
+
+    path := string("result.csv")
+    w: csv.Writer
+
+    csv.write(&w, record)
+    //file, err := os.
+}
